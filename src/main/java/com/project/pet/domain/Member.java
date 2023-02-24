@@ -2,6 +2,7 @@ package com.project.pet.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Builder
 @Getter
@@ -22,5 +23,9 @@ public class Member extends Timestamped {
 
     @Column(nullable = false)
     private String password;
+
+    public boolean validatePassword(PasswordEncoder passwordEncoder, String password) {
+        return passwordEncoder.matches(password, this.password);
+    }
 
 }
