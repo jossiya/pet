@@ -172,7 +172,7 @@ public class MemberService {
 
         if (null == member) {
             return ResponseDto.fail("MEMBER_NOT_FOUND",
-                    "이메일 혹은 비밀번호가 일치하지 않습니다.");
+                    "로그인 정보를 찾을 수 없습니다.");
         }
         return tokenProvider.deleteRefreshToken(member);
     }
@@ -182,7 +182,7 @@ public class MemberService {
         response.addHeader("Refresh_Token", tokenDto.getRefreshToken());
         response.addHeader("Access-Token-Expire-Time", tokenDto.getAccessTokenExpiresIn().toString());
     }
-
+    //초큰 재발급
     public ResponseDto<?> reissue(HttpServletRequest request, HttpServletResponse response) {
         if (!tokenProvider.validateToken(request.getHeader("Refresh_Token"))) {
             return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");

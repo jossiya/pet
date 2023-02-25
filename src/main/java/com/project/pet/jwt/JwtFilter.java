@@ -50,7 +50,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
 
         if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) {
-            Claims claims; //
+            Claims claims;
 
             try {
                 claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(jwt).getBody();

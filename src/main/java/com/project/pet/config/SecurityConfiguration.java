@@ -41,7 +41,7 @@ public class SecurityConfiguration {
     }
 
     private static final String[] AUTH_WHITELIST = {
-            "/v1/**","/v1/members/**","/v1/auth/**"
+            "/v1/members/**","/v1/auth/**","/v1/member/emailcheck"
     };
 
     @Bean
@@ -57,6 +57,7 @@ public class SecurityConfiguration {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.authorizeHttpRequests(authorize -> authorize
                 .requestMatchers(AUTH_WHITELIST).permitAll()
+//                .requestMatchers("/v1/**").permitAll()
                 .requestMatchers( "/v2/api-docs",
                         "/swagger-resources",
                         "/swagger-resources/**",

@@ -1,6 +1,7 @@
 package com.project.pet.controller;
 
 import com.project.pet.domain.UserDetailsImpl;
+import com.project.pet.dto.requestdto.EmailAuthRequestDto;
 import com.project.pet.dto.requestdto.LoginRequestDto;
 import com.project.pet.dto.requestdto.MemberRequestDto;
 import com.project.pet.dto.responsedto.ResponseDto;
@@ -44,5 +45,10 @@ public class MemberController {
     @DeleteMapping(value="/withdrawl/{memberId}")
     public ResponseDto<?> withdrawal(@PathVariable Long memberId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return memberService.withdrawMember(memberId, userDetails);
+    }
+    //이메일 중복 확인
+    @GetMapping(value="/emailcheck")
+    public ResponseDto<?> emailcheck(@RequestBody @Valid EmailAuthRequestDto requestDto){
+        return memberService.emailAuth(requestDto);
     }
 }

@@ -45,7 +45,7 @@ public class TokenProvider {
         Date accessTokenExpiresIn = new Date(now + ACCESS_TOKEN_EXPIRE_TIME); // 엑세스 토큰 만료시간
         String accessToken = Jwts.builder()
                 .setSubject(member.getNickname())
-
+                .claim(AUTHORITIES_KEY,"user")
                 .setExpiration(accessTokenExpiresIn)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
