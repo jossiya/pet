@@ -88,6 +88,7 @@ public class PostService {
         return ResponseDto.success(post);
     }
 
+    //게시글 삭제
     @Transactional
     public ResponseDto<?> deletePost(Long id, HttpServletRequest request) {
         if (!tokenProvider.validateToken(request.getHeader("Refresh_Token"))) {
