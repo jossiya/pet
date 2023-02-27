@@ -7,6 +7,7 @@ import com.project.pet.dto.responsedto.EmailAuthResponseDto;
 import com.project.pet.dto.responsedto.MemberResponseDto;
 import com.project.pet.dto.responsedto.NicknameAuthResponseDto;
 import com.project.pet.dto.responsedto.ResponseDto;
+import com.project.pet.error.ErrorCode;
 import com.project.pet.jwt.TokenProvider;
 import com.project.pet.repository.MemberRepository;
 import com.project.pet.repository.RefreshTokenRepository;
@@ -53,17 +54,17 @@ public class MemberService {
     public ResponseDto<?> emailAuth(EmailAuthRequestDto requestDto) {
         //이메일 중복 체크
         if (null != isPresentMember(requestDto.getEmail())) {
-            return ResponseDto.fail("DUPLICATED_EMAIL",
-                    "중복된 이메일입니다.");
+            return ResponseDto.fail(ErrorCode.ALREADY_SAVED_ID.name(),
+                    ErrorCode.ALREADY_SAVED_ID.getMessage());
         }
 
         if(!requestDto.getEmail().contains("@")) {
-            return ResponseDto.fail("INVALID_EMAIL",
-                    "이메일 형식을 확인해주세요.");
+            return ResponseDto.fail(ErrorCode.SIGNUP_WRONG_LOGINID.name(),
+                    ErrorCode.SIGNUP_WRONG_LOGINID.getMessage());
         }
 
         if (requestDto.getEmail().equals("")) {
-            return ResponseDto.success("이메일을 입력해주세요.");
+            return ResponseDto.fail(ErrorCode.LOGINID_EMPTY.name(),ErrorCode.LOGINID_EMPTY.getMessage());
         }
 
         Member member = Member.builder()
@@ -94,26 +95,25 @@ public class MemberService {
 
         //이메일 중복 체크
         if (null != isPresentMember(requestDto.getEmail())) {
-            return ResponseDto.fail("DUPLICATED_EMAIL",
-                    "중복된 이메일 입니다.");
+            return ResponseDto.fail(ErrorCode.ALREADY_SAVED_ID.name(),
+                    ErrorCode.ALREADY_SAVED_ID.getMessage());
         }
-
         // 이메일 형식 체크
         if(!requestDto.getEmail().contains("@")) {
-            return ResponseDto.fail("INVALID_EMAIL",
-                    "이메일 형식을 확인해주세요.");
+            return ResponseDto.fail(ErrorCode.SIGNUP_WRONG_LOGINID.name(),
+                    ErrorCode.SIGNUP_WRONG_LOGINID.getMessage());
         }
 
         // 닉네임 중복 체크
         if(null != isPresentNickname(requestDto.getNickname())) {
-            return ResponseDto.fail("INVALID_NICKNAME",
-                    "중복된 닉네임입니다.");
+            return ResponseDto.fail(ErrorCode.ALERADY_SAVED_NICKNAME.name(),
+                    ErrorCode.ALERADY_SAVED_NICKNAME.getMessage());
         }
 
         //패스워드 일치 체크
         if(!Objects.equals(requestDto.getPasswordConfirm(), requestDto.getPassword())){
-            return ResponseDto.fail("PASSWORD_CONFIRM_FAIL",
-                    "패스워드가 일치하지 않습니다.");
+            return ResponseDto.fail(ErrorCode.PASSWORDS_NOT_MATCHED.name(),
+                    ErrorCode.PASSWORDS_NOT_MATCHED.getMessage());
         }
 
         Member member = Member.builder()
@@ -141,13 +141,13 @@ public class MemberService {
 
         // null값 사용자 유효성 체크
         if (null == member) {
-            return ResponseDto.fail("MEMBER_NOT_FOUND",
-                    "이메일 혹은 비밀번호가 일치하지 않습니다.");
+            return ResponseDto.fail(ErrorCode.MEMBER_NOT_FOUND.name(),
+                    ErrorCode.MEMBER_NOT_FOUND.getMessage());
         }
 
         // 비밀번호 사용자 유효성 체크
         if (!member.validatePassword(passwordEncoder, requestDto.getPassword())) {
-            return ResponseDto.fail("INVALID_MEMBER", "이메일 혹은 비밀번호가 일치하지 않습니다.");
+            return ResponseDto.fail(ErrorCode.INVALID_MEMBER.name(), ErrorCode.INVALID_MEMBER.getMessage());
         }
 
         TokenDto tokenDto = tokenProvider.generateTokenDto(member);
@@ -166,13 +166,13 @@ public class MemberService {
     // 로그아웃
     public ResponseDto<?> logout(HttpServletRequest request) {
         if (!tokenProvider.validateToken(request.getHeader("Refresh_Token"))) {
-            return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
+            return ResponseDto.fail(ErrorCode.INVALID_MEMBER.name(), ErrorCode.INVALID_MEMBER.getMessage());
         }
         Member member = (Member) tokenProvider.getMemberFromAuthentication();
 
         if (null == member) {
-            return ResponseDto.fail("MEMBER_NOT_FOUND",
-                    "로그인 정보를 찾을 수 없습니다.");
+            return ResponseDto.fail(ErrorCode.MEMBER_NOT_FOUND.name(),
+                    ErrorCode.MEMBER_NOT_FOUND.getMessage());
         }
         return tokenProvider.deleteRefreshToken(member);
     }
@@ -185,7 +185,7 @@ public class MemberService {
     //초큰 재발급
     public ResponseDto<?> reissue(HttpServletRequest request, HttpServletResponse response) {
         if (!tokenProvider.validateToken(request.getHeader("Refresh_Token"))) {
-            return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
+            return ResponseDto.fail(ErrorCode.INVALID_MEMBER.name(), ErrorCode.INVALID_MEMBER.getMessage());
         }
 
         Member member = refreshTokenRepository.findByValue(request.getHeader("Refresh_Token")).get().getMember();

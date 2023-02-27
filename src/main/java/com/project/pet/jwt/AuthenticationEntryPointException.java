@@ -18,7 +18,7 @@ public class AuthenticationEntryPointException implements AuthenticationEntryPoi
         response.setContentType("application/json;charset=UTF-8");
         response.getWriter().println(
                 new ObjectMapper().writeValueAsString(
-                        ResponseDto.fail("BAD_REQUEST", "로그인이 필요합니다.")
+                        ResponseDto.fail("BAD_REQUEST", "인증 오류가 발생했습니다.")
                 )
         );
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);

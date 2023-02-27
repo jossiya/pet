@@ -5,6 +5,7 @@ import com.project.pet.domain.Member;
 import com.project.pet.dto.requestdto.PostRequestDto;
 import com.project.pet.dto.responsedto.BoardResponseDto;
 import com.project.pet.dto.responsedto.ResponseDto;
+import com.project.pet.error.ErrorCode;
 import com.project.pet.jwt.TokenProvider;
 import com.project.pet.repository.BoardRepository;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,15 +25,13 @@ public class BoardService {
     @Transactional
     public ResponseDto<?> createBoard(PostRequestDto requestDto, HttpServletRequest request) {
         if (!tokenProvider.validateToken(request.getHeader("Refresh_Token"))) {
-            return ResponseDto.fail("INVALID_TOKEN",
-                    "Token이 유효하지 않습니다.");
+            return ResponseDto.fail(ErrorCode.INVALID_TOKEN.name(), ErrorCode.INVALID_TOKEN.getMessage());
 
         }
 
         Member member = (Member) tokenProvider.getMemberFromAuthentication();
         if (null == member) {
-            return ResponseDto.fail("MEMBER_NOT_FOUND",
-                    "로그인이 필요합니다.");
+            return ResponseDto.fail(ErrorCode.MEMBER_NOT_FOUND.name(),ErrorCode.MEMBER_NOT_FOUND.getMessage());
         }
         Board board = Board.builder()
                 .title(requestDto.getTitle())
@@ -56,7 +55,7 @@ public class BoardService {
     public ResponseDto<?> getBoard(Long id) {
         Board board = isPresentBoard(id);
         if (null == board) {
-            return ResponseDto.fail("NOT_FOUND", "존재하지 않는 게시판 id 입니다.");
+            return ResponseDto.fail(ErrorCode.NOT_EXIST_BOARD.name(), ErrorCode.NOT_EXIST_BOARD.getMessage());
         }
         return ResponseDto.success(board);
     }
@@ -71,17 +70,16 @@ public class BoardService {
     @Transactional
     public ResponseDto<?> updateBoard(Long id, PostRequestDto requestDto, HttpServletRequest request) {
         if (!tokenProvider.validateToken(request.getHeader("Refresh_Token"))) {
-            return ResponseDto.fail("INVALID_TOKEN",
-                    "Token이 유효하지 않습니다.");
+            return ResponseDto.fail(ErrorCode.INVALID_TOKEN.name(), ErrorCode.INVALID_TOKEN.getMessage());
 
         }
         Board board = isPresentBoard(id);
         if (null == board) {
-            return ResponseDto.fail("NOT_FOUND", "존재하지 않는 게시판 id 입니다.");
+            return ResponseDto.fail(ErrorCode.NOT_EXIST_BOARD.name(), ErrorCode.NOT_EXIST_BOARD.getMessage());
         }
         Member member = (Member) tokenProvider.getMemberFromAuthentication();
         if (board.validateMember(member)) {
-            return ResponseDto.fail("BAD_REQUEST", "작성자만 수정할 수 있습니다.");
+            return ResponseDto.fail(ErrorCode.BOARD_UPDATE_WRONG_ACCESS.name(), ErrorCode.BOARD_UPDATE_WRONG_ACCESS.getMessage());
         }
         board.update(requestDto);
         return ResponseDto.success(board);
@@ -91,17 +89,16 @@ public class BoardService {
     @Transactional
     public ResponseDto<?> deleteBoard(Long id, HttpServletRequest request) {
         if (!tokenProvider.validateToken(request.getHeader("Refresh_Token"))) {
-            return ResponseDto.fail("INVALID_TOKEN",
-                    "Token이 유효하지 않습니다.");
+            return ResponseDto.fail(ErrorCode.INVALID_TOKEN.name(), ErrorCode.INVALID_TOKEN.getMessage());
 
         }
         Board board = isPresentBoard(id);
         if (null == board) {
-            return ResponseDto.fail("NOT_FOUND", "존재하지 않는 게시판 id 입니다.");
+            return ResponseDto.fail(ErrorCode.NOT_EXIST_BOARD.name(), ErrorCode.NOT_EXIST_BOARD.getMessage());
         }
         Member member = (Member) tokenProvider.getMemberFromAuthentication();
         if (board.validateMember(member)) {
-            return ResponseDto.fail("BAD_REQUEST", "작성자만 삭제할 수 있습니다.");
+            return ResponseDto.fail(ErrorCode.BOARD_DELETE_WRONG_ACCESS.name(), ErrorCode.BOARD_DELETE_WRONG_ACCESS.getMessage());
         }
         boardRepository.delete(board);
         return ResponseDto.success("게시글이 삭제되었습니다.");

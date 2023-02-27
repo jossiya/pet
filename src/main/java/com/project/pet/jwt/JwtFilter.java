@@ -3,6 +3,7 @@ package com.project.pet.jwt;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.project.pet.dto.responsedto.ResponseDto;
+import com.project.pet.error.ErrorCode;
 import com.project.pet.service.UserDetailsServiceImpl;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -65,7 +66,7 @@ public class JwtFilter extends OncePerRequestFilter {
                 response.setContentType("application/json;charset=UTF-8");
                 response.getWriter().println(
                         new ObjectMapper().writeValueAsString(
-                                ResponseDto.fail("BAD_REQUEST", "Token이 유효햐지 않습니다.")
+                                ResponseDto.fail(ErrorCode.INVALID_TOKEN.name(), ErrorCode.INVALID_TOKEN.getMessage())
                         )
                 );
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
