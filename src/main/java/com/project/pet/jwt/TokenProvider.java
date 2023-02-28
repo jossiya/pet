@@ -7,6 +7,7 @@ import com.project.pet.domain.UserDetailsImpl;
 import com.project.pet.dto.requestdto.TokenDto;
 import com.project.pet.dto.responsedto.ResponseDto;
 import com.project.pet.repository.RefreshTokenRepository;
+import com.project.pet.shared.Authority;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -45,7 +46,7 @@ public class TokenProvider {
         Date accessTokenExpiresIn = new Date(now + ACCESS_TOKEN_EXPIRE_TIME); // 엑세스 토큰 만료시간
         String accessToken = Jwts.builder()
                 .setSubject(member.getNickname())
-                .claim(AUTHORITIES_KEY,"user")
+                .claim(AUTHORITIES_KEY, Authority.ROLE_USER.name())
                 .setExpiration(accessTokenExpiresIn)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();

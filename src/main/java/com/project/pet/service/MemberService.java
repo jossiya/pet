@@ -143,11 +143,12 @@ public class MemberService {
         if (null == member) {
             return ResponseDto.fail(ErrorCode.MEMBER_NOT_FOUND.name(),
                     ErrorCode.MEMBER_NOT_FOUND.getMessage());
+
         }
 
         // 비밀번호 사용자 유효성 체크
         if (!member.validatePassword(passwordEncoder, requestDto.getPassword())) {
-            return ResponseDto.fail(ErrorCode.INVALID_MEMBER.name(), ErrorCode.INVALID_MEMBER.getMessage());
+            return ResponseDto.fail(ErrorCode.PASSWORD_MISMATCH.name(), ErrorCode.PASSWORD_MISMATCH.getMessage());
         }
 
         TokenDto tokenDto = tokenProvider.generateTokenDto(member);
