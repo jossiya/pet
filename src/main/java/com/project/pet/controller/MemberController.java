@@ -4,6 +4,7 @@ import com.project.pet.domain.UserDetailsImpl;
 import com.project.pet.dto.requestdto.EmailAuthRequestDto;
 import com.project.pet.dto.requestdto.LoginRequestDto;
 import com.project.pet.dto.requestdto.MemberRequestDto;
+import com.project.pet.dto.requestdto.MemberUpdateRequestDto;
 import com.project.pet.dto.responsedto.ResponseDto;
 import com.project.pet.service.MemberService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -35,12 +36,19 @@ public class MemberController {
     public ResponseDto<?> logout(HttpServletRequest request) {
         return memberService.logout(request);
     }
-
+    //회원정보 수정
+    @PostMapping(value = "/update/{memberId}")
+    public ResponseDto<?> update(@PathVariable Long memberId,
+                                 @RequestBody @Valid MemberUpdateRequestDto memberUpdateRequestDto,
+                                 HttpServletRequest request) {
+        return memberService.update(memberId,memberUpdateRequestDto,request);
+    }
     //토큰재발급
     @PostMapping(value = "/reissue")
     public ResponseDto<?> reissue(HttpServletRequest request, HttpServletResponse response) {
         return memberService.reissue(request, response);
     }
+    
     //회원탈퇴
     @DeleteMapping(value="/withdrawl/{memberId}")
     public ResponseDto<?> withdrawal(@PathVariable Long memberId, @AuthenticationPrincipal UserDetailsImpl userDetails) {

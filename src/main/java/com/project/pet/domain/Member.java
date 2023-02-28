@@ -43,6 +43,12 @@ public class Member extends Timestamped {
     public int hashCode() {
         return getClass().hashCode();
     }
+    public void nameUpdate(String nickname){
+        this.nickname=nickname;
+    }
+    public void passwordUpdate(String password){
+        this.password=password;
+    }
     public boolean validatePassword(PasswordEncoder passwordEncoder, String password) {
         return passwordEncoder.matches(password, this.password);
     }

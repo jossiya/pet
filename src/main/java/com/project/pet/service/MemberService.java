@@ -133,6 +133,26 @@ public class MemberService {
                         .build()
         );
     }
+    //회원 정보 수정
+    @Transactional
+    public ResponseDto<?> update(Long id, MemberUpdateRequestDto memberUpdateRequestDto, HttpServletRequest request){
+        if (!tokenProvider.validateToken(request.getHeader("Refresh_Token"))) {
+            return ResponseDto.fail(ErrorCode.INVALID_MEMBER.name(), ErrorCode.INVALID_MEMBER.getMessage());
+        }
+        Member member = (Member) tokenProvider.getMemberFromAuthentication();
+        if (null == member) {
+            return ResponseDto.fail(ErrorCode.MEMBER_NOT_FOUND.name(),
+                    ErrorCode.MEMBER_NOT_FOUND.getMessage());
+        }
+        Member memberInit=memberRepository.findById(member.getId()).orElse(null);
+        if(null!=memberUpdateRequestDto.getPassword()&&null!=memberUpdateRequestDto.getNickname()) {
+            memberInit.passwordUpdate(passwordEncoder.encode(memberUpdateRequestDto.getPassword()));
+            memberInit.nameUpdate(memberUpdateRequestDto.getNickname());
+        }else{
+            return ResponseDto.fail(ErrorCode.MEMBER_WRONG_UPDATE.name(), ErrorCode.MEMBER_WRONG_UPDATE.getMessage());
+        }
+        return ResponseDto.success("회원정보가 수정되었습니다.");
+    }
 
     // 로그인
     @Transactional
