@@ -1,5 +1,7 @@
 package com.project.pet.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.project.pet.dto.requestdto.BoardRequestDto;
 import com.project.pet.dto.requestdto.PostRequestDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -26,10 +28,11 @@ public class Board extends Timestamped{
     @ManyToOne(fetch = FetchType.LAZY)
     private Member member;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "board")
     private List<Post> post;
 
-    public void update(PostRequestDto requestDto){
+    public void update(BoardRequestDto requestDto){
         this.title=requestDto.getTitle();
     }
 

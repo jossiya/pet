@@ -2,6 +2,7 @@ package com.project.pet.service;
 
 import com.project.pet.domain.Board;
 import com.project.pet.domain.Member;
+import com.project.pet.dto.requestdto.BoardRequestDto;
 import com.project.pet.dto.requestdto.PostRequestDto;
 import com.project.pet.dto.responsedto.BoardResponseDto;
 import com.project.pet.dto.responsedto.ResponseDto;
@@ -23,7 +24,7 @@ public class BoardService {
 
     //게시판 등록
     @Transactional
-    public ResponseDto<?> createBoard(PostRequestDto requestDto, HttpServletRequest request) {
+    public ResponseDto<?> createBoard(BoardRequestDto requestDto, HttpServletRequest request) {
         if (!tokenProvider.validateToken(request.getHeader("Refresh_Token"))) {
             return ResponseDto.fail(ErrorCode.INVALID_TOKEN.name(), ErrorCode.INVALID_TOKEN.getMessage());
 
@@ -33,6 +34,7 @@ public class BoardService {
         if (null == member) {
             return ResponseDto.fail(ErrorCode.MEMBER_NOT_FOUND.name(),ErrorCode.MEMBER_NOT_FOUND.getMessage());
         }
+        if(requestDto.getTitle().isEmpty()) return ResponseDto.fail(ErrorCode.NOT_BLANK_BOARD.name(),ErrorCode.NOT_BLANK_BOARD.getMessage());
         Board board = Board.builder()
                 .title(requestDto.getTitle())
                 .member(member)
@@ -57,7 +59,15 @@ public class BoardService {
         if (null == board) {
             return ResponseDto.fail(ErrorCode.NOT_EXIST_BOARD.name(), ErrorCode.NOT_EXIST_BOARD.getMessage());
         }
-        return ResponseDto.success(board);
+
+        return ResponseDto.success(BoardResponseDto.builder()
+                        .id(board.getId())
+                        .title(board.getTitle())
+                        .author(board.getMember().getNickname())
+                        .postResponseDtoList(board.getPost())
+                        .createdAt(board.getCreatedAt())
+                        .modifiedAt(board.getModifiedAt())
+                        .build());
     }
     
     //게시판 전체 조회
@@ -68,7 +78,7 @@ public class BoardService {
 
     //게시판 수정
     @Transactional
-    public ResponseDto<?> updateBoard(Long id, PostRequestDto requestDto, HttpServletRequest request) {
+    public ResponseDto<?> updateBoard(Long id, BoardRequestDto requestDto, HttpServletRequest request) {
         if (!tokenProvider.validateToken(request.getHeader("Refresh_Token"))) {
             return ResponseDto.fail(ErrorCode.INVALID_TOKEN.name(), ErrorCode.INVALID_TOKEN.getMessage());
 

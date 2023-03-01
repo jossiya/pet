@@ -1,5 +1,6 @@
 package com.project.pet.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.project.pet.dto.requestdto.PostRequestDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -29,11 +30,11 @@ public class Post extends Timestamped{
     @JoinColumn(name = "member_id", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     private Member member;
-
     @JoinColumn(name = "board_id", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     private Board board;
 
+    
     @OneToMany(mappedBy = "post")
     private List<Comment> comments;
 

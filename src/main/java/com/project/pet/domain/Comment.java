@@ -1,5 +1,6 @@
 package com.project.pet.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,7 +24,7 @@ public class Comment extends Timestamped{
     @ManyToOne(fetch = FetchType.LAZY)
     private Member member;
 
-
+    @JsonIgnore
     @JoinColumn(name = "post_id", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     private Post post;
