@@ -25,6 +25,7 @@ public enum ErrorCode {
     LOGINID_MISMATCH(404,"아이디가 일치하지 않습니다"),
     PASSWORD_MISMATCH(404,"비밀번호가 일치하지 않습니다."),
     MEMBER_WRONG_UPDATE(400,"닉네임과 비밀번호를 정확하게 입력해주세요."),
+    MEMBER_WRONG_DELETE(400,"본인 아이디만 탈퇴가능합니다."),
 
     //================================token========================================
     INVALID_TOKEN(404,"Token이 유효하지 않습니다."),

@@ -1,5 +1,6 @@
 package com.project.pet.service;
 
+import com.project.pet.domain.Board;
 import com.project.pet.domain.Comment;
 import com.project.pet.domain.Member;
 import com.project.pet.domain.Post;
@@ -8,6 +9,7 @@ import com.project.pet.dto.responsedto.PostResponseDto;
 import com.project.pet.dto.responsedto.ResponseDto;
 import com.project.pet.error.ErrorCode;
 import com.project.pet.jwt.TokenProvider;
+import com.project.pet.repository.BoardRepository;
 import com.project.pet.repository.PostRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
@@ -20,6 +22,7 @@ import java.util.Optional;
 @Service
 public class PostService {
     private final PostRepository postRepository;
+    private final BoardRepository boardRepository;
     private final TokenProvider tokenProvider;
 
     //게시물 작성
@@ -34,7 +37,9 @@ public class PostService {
         if (null == member) {
             return ResponseDto.fail(ErrorCode.MEMBER_NOT_FOUND.name(),ErrorCode.MEMBER_NOT_FOUND.getMessage());
         }
+        Board boardId= boardRepository.findById(requestDto.getBoardId()).orElse(null);
         Post post = Post.builder()
+                .board(boardId)
                 .title(requestDto.getTitle())
                 .content(requestDto.getContent())
                 .member(member)

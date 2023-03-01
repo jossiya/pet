@@ -227,10 +227,12 @@ public class MemberService {
     // 회원 탈퇴
     @Transactional
     public ResponseDto<?> withdrawMember(Long memberId, UserDetailsImpl userDetails) {
-        Member member = memberRepository.findById(userDetails.getMember().getId()).orElseThrow(
+        Member member = memberRepository.findById(memberId).orElseThrow(
                 () ->new IllegalArgumentException("등록되지 않은 회원입니다.")
         );
-
+        if(!member.equals(userDetails.getMember())){
+            return ResponseDto.fail(ErrorCode.MEMBER_WRONG_DELETE.name(), ErrorCode.MEMBER_WRONG_DELETE.getMessage());
+        }
         refreshTokenRepository.deleteByMemberId(memberId);
         memberRepository.deleteById(memberId);
 
